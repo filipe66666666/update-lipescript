@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://mel-script.vercel.app/Rec/1.0.3"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/mode/simple.min.js"></script>
+<title>Editor do Lipescript</title>
+<style>
+    .CodeMirror {
+        border: 1px solid #ccc;
+        height: auto;
+    }
+    .cm-incluir{ color: #0000FF; font-weight: bold; }
+    .cm-se { color: #FF0000; font-weight: bold; }
+    .cm-senao { color: #FF4500; font-weight: bold; }
+    .cm-entao { color: #008000; font-weight: bold; }
+    .cm-funcao { color: #800080; font-weight: bold; }
+    .cm-tentar { color: #FFA500; font-weight: bold; }
+    .cm-para { color: #4B0082; font-weight: bold; }
+    .cm-criar { color: #008B8B; font-weight: bold; }
+   .cm-verdadeiro { color: #31ff15; font-weight: bold; }
+    .cm-falso { color: #ff0034; font-weight: bold; }
+     .cm-pegar { color: #40ff8c; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<link rel="stylesheet" href="styles.css">
+
+<h1>Editor Lipescript</h1>
+
+<textarea id="codigoMEL"></textarea><br>
+
+<button onclick="executarCodigoMEL()">Executar Código Lipescript</button><br>
+
+<div id="output"></div>
+
+<script>
+let editor;
+
+document.addEventListener('DOMContentLoaded', function() {
+    CodeMirror.defineSimpleMode("melmode", {
+        start: [
+            {regex: /se ter/, token: "incluir"},
+            {regex: /se\b/, token: "se"},
+            {regex: /senao\b/, token: "senao"},
+            {regex: /entao\b/, token: "entao"},
+            {regex: /funcao\b/, token: "funcao"},
+            {regex: /tentar\b/, token: "tentar"},
+            {regex: /para\b/, token: "para"},
+            {regex: /pegar\b/, token: "pegar"},
+            {regex: /criar\b/, token: "criar"},
+            {regex: /verdadeiro\b/, token: "verdadeiro"},
+            {regex: /falso\b/, token: "falso"},
+            {regex: /\/\/.*/, token: "comment"},
+            {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+            {regex: /(function)(\s+)([a-z$][\w$]*)/, token: ["keyword", null, "variable-2"]},
+            {regex: /(?:function|var|return|if|for|while|else|do|this)\b/, token: "keyword"},
+            {regex: /true|false|null|undefined/, token: "atom"},
+            {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i, token: "number"},
+            {regex: /\/(?:[^\\]|\\.)*?\//, token: "variable-3"},
+            {regex: /[-+\/*=<>!]+/, token: "operator"},
+            {regex: /[\{\[\(]/, indent: true},
+            {regex: /[\}\]\)]/, dedent: true},
+             {regex: /terminar\b/, token: "terminar"},
+        ],
+        comment: [
+            {regex: /.*?\*\//, token: "comment", next: "start"},
+            {regex: /.*/, token: "comment"}
+        ],
+        meta: {
+            dontIndentStates: ["comment"],
+            lineComment: "//"
+        }
+    });
+
+    editor = CodeMirror.fromTextArea(document.getElementById('codigoMEL'), {
+        lineNumbers: true,
+        mode: "melmode",
+        theme: 'default',
+        indentUnit: 4,
+        smartIndent: true,
+        lineWrapping: true
+    });
+    editor.setSize(null, 200);
+});
+
+function executarCodigoMEL() {
+    const codigoMEL = editor.getValue();
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerText = '';
+   
+    try {
+        _iMSE(codigoMEL);
+        _iMSE3();
+    } catch (error) {
+        imprimirErro(error.message);
+    }
+}
+
+function incluir(mensagem) {
+    const outputDiv = document.getElementById('output');
+    const errorMessage = document.createElement('p');
+    errorMessage.textContent = mensagem;
+    errorMessage.style.color = 'red';
+    outputDiv.appendChild(errorMessage);
+}
+</script>
+ <h4>creditos para: Ravy</h4>
+</body>
+</html>
